@@ -1,0 +1,16 @@
+package com.scamshield.ai.repository;
+
+import com.scamshield.ai.entity.AnalysisHistory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface AnalysisHistoryRepository extends JpaRepository<AnalysisHistory, Long> {
+    List<AnalysisHistory> findByUserIdOrderByCreatedAtDesc(Long userId);
+    Page<AnalysisHistory> findByUserId(Long userId, Pageable pageable);
+    void deleteByUserIdAndId(Long userId, Long id);
+}
