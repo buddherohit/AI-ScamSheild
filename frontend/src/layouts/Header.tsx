@@ -1,7 +1,6 @@
 import React from 'react';
 import { Menu, Search, Moon, Sun, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { toggleSidebar, toggleThemeMode } from '@/store/slices/uiSlice';
@@ -34,7 +33,8 @@ export const Header: React.FC<HeaderProps> = ({ isMobile }) => {
           <span>Dashboard</span>
         </div>
       </div>
-
+ 
+      <div className="flex items-center gap-2 md:gap-4 flex-1 justify-end">
         <button 
           onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
           className="relative hidden sm:flex items-center w-full max-w-xs h-9 px-3 bg-muted/30 border border-input rounded-md text-sm text-muted-foreground hover:bg-muted/60 transition-all focus:outline-none focus:ring-1 focus:ring-ring"
