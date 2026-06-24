@@ -1,0 +1,53 @@
+{
+  "name": "ai-scamshield-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --ext ts,tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,md}\"",
+    "preview": "vite preview",
+    "prepare": "cd .. && husky install frontend/.husky"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
+    "@reduxjs/toolkit": "^2.2.0",
+    "axios": "^1.7.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.51.0",
+    "react-redux": "^9.1.0",
+    "react-router": "^7.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.0",
+    "typescript": "^5.5.0",
+    "vite": "^6.0.0"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "eslint --max-warnings 0",
+      "prettier --write"
+    ],
+    "src/**/*.{css,md,json}": [
+      "prettier --write"
+    ]
+  }
+}
