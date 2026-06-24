@@ -69,3 +69,9 @@ The backend is built with Spring Boot 3.5+ and Java 21, conforming to **Clean Ar
 2. **DTO Mapping Rules:** Entities are never returned directly to endpoints. MapStruct translates Entities to/from DTOs.
 3. **Stateless Security:** Request filtering checks authorization tokens on each endpoint. Security Context is stored thread-local per request execution.
 4. **Structured Exception Envelopes:** Handlers catch runtime anomalies and return consistent, typed error payloads matching the `{success, message, data, timestamp}` model.
+
+---
+
+## 🔍 Fraud Intelligence Core Component
+
+For detailed design, risk scoring heuristics, database schema models, and guides to extending the rule engine, refer to the [Fraud Intelligence Core Documentation](file:///E:/AI%20ScamShield/docs/fraud_core.md).

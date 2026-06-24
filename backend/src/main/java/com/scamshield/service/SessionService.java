@@ -1,5 +1,6 @@
 package com.scamshield.service;
 
+import com.scamshield.entity.User;
 import com.scamshield.entity.UserSession;
 import com.scamshield.repository.UserSessionRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class SessionService {
     @Transactional
     public UserSession createSession(Long userId, String deviceName, String ipAddress, String userAgent) {
         UserSession session = UserSession.builder()
-                .userId(userId)
+                .user(User.builder().id(userId).build())
                 .deviceName(deviceName)
                 .ipAddress(ipAddress)
                 .userAgent(userAgent)

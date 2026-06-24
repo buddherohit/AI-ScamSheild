@@ -2,121 +2,55 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router';
 import { useAppSelector } from '@/store';
 
-// Layout Wrappers
-import AuthLayout from '@/layouts/AuthLayout';
-import MainLayout from '@/layouts/MainLayout';
+import { AuthLayout } from '@/layouts/AuthLayout';
+import { MainLayout } from '@/layouts/MainLayout';
 
-// Page Views
-import Login from '@/pages/Login';
-import Dashboard from '@/pages/Dashboard';
-import NotFound from '@/pages/NotFound';
+import { Login } from '@/pages/Login';
+import { Dashboard } from '@/pages/Dashboard';
+import { Profile } from '@/pages/Profile';
+import { SessionManagement } from '@/pages/SessionManagement';
+import { SecurityCenter } from '@/pages/SecurityCenter';
+import { Settings } from '@/pages/Settings';
+import { NotFound } from '@/pages/NotFound';
 
-// ==============================================================================
-// Route Guards
-// ==============================================================================
 interface GuardProps {
   children: React.ReactElement;
 }
 
 export const ProtectedRoute: React.FC<GuardProps> = ({ children }) => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
-
-  if (!isAuthenticated) {
-    // Redirect to login if user not authenticated
-    return <Navigate to="/login" replace />;
-  }
-
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
   return children;
 };
 
 export const PublicRoute: React.FC<GuardProps> = ({ children }) => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
-
-  if (isAuthenticated) {
-    // Redirect to dashboard if user is already authenticated
-    return <Navigate to="/dashboard" replace />;
-  }
-
+  if (isAuthenticated) return <Navigate to="/dashboard" replace />;
   return children;
 };
 
-// ==============================================================================
-// Routes Orchestrator
-// ==============================================================================
 export const AppRoutes: React.FC = () => {
   return (
     <Routes>
-      {/* Root Route Redirect */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-      {/* Public Guest Routes */}
-      <Route
-        path="/login"
-        element={
-          <PublicRoute>
-            <AuthLayout>
-              <Login />
-            </AuthLayout>
-          </PublicRoute>
-        }
-      />
+      {/* Public Routes */}
+      <Route path="/" element={<PublicRoute><AuthLayout /></PublicRoute>}>
+        <Route path="login" element={<Login />} />
+      </Route>
 
-      {/* Protected Enterprise Routes */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <MainLayout>
-              <Dashboard />
-            </MainLayout>
-          </ProtectedRoute>
-        }
-      />
+      {/* Protected Routes */}
+      <Route path="/" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="sessions" element={<SessionManagement />} />
+        <Route path="security" element={<SecurityCenter />} />
+        <Route path="settings" element={<Settings />} />
+        
+        {/* Placeholders */}
+        <Route path="notifications" element={<div className="p-6">Notifications (WIP)</div>} />
+      </Route>
 
-      {/* Feature Modules Placeholder Routes */}
-      <Route
-        path="/fraud"
-        element={
-          <ProtectedRoute>
-            <MainLayout>
-              <div style={{ padding: '24px' }}>
-                <h2>Scam & Fraud Analysis Control Panel</h2>
-                <p>Telemetry, scans, and heuristics configuration endpoints [Phase 2 Module].</p>
-              </div>
-            </MainLayout>
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/reports"
-        element={
-          <ProtectedRoute>
-            <MainLayout>
-              <div style={{ padding: '24px' }}>
-                <h2>Analytics & Compliance Reports</h2>
-                <p>Audits, exports, and verification logs templates [Phase 2 Module].</p>
-              </div>
-            </MainLayout>
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/notifications"
-        element={
-          <ProtectedRoute>
-            <MainLayout>
-              <div style={{ padding: '24px' }}>
-                <h2>Enterprise Alerts Dispatcher</h2>
-                <p>Webhook channels, email, and SMS alerts dispatch matrices [Phase 2 Module].</p>
-              </div>
-            </MainLayout>
-          </ProtectedRoute>
-        }
-      />
-
-      {/* Catch-all 404 Fallback Route */}
       <Route path="/404" element={<NotFound />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>
