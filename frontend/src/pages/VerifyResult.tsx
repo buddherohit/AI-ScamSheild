@@ -10,7 +10,8 @@ import {
   AlertTriangle, 
   CheckCircle, 
   ArrowLeft, 
-  AlertOctagon
+  AlertOctagon,
+  Info
 } from 'lucide-react';
 
 interface UpiResult {
@@ -41,7 +42,7 @@ export const VerifyResult: React.FC = () => {
         <AlertOctagon className="h-16 w-16 text-destructive animate-pulse" />
         <h3 className="text-xl font-semibold">No Verification Data</h3>
         <p className="text-muted-foreground">Please submit a UPI ID or QR scan to assess risk.</p>
-        <Button onClick={() => navigate('/dashboard')} variant="default">
+        <Button onClick={() => navigate('/dashboard')} variant="default" className="text-xs font-semibold h-10 px-4">
           Go to Dashboard
         </Button>
       </div>
@@ -62,7 +63,7 @@ export const VerifyResult: React.FC = () => {
 
   if (type === 'upi') {
     const upiData = data as UpiResult;
-    title = 'UPI Reputation Check';
+    title = 'UPI Reputation Audit Report';
     entityValue = upiData.upiId;
     score = upiData.score;
     status = upiData.status;
@@ -71,20 +72,20 @@ export const VerifyResult: React.FC = () => {
     // Map status to risk levels and recommendations
     if (status === 'TRUSTED') {
       riskLevel = 'LOW';
-      recommendation = 'Safe to proceed';
+      recommendation = 'Verified Safe. Fully Trusted Destination.';
     } else if (status === 'SAFE') {
       riskLevel = 'LOW';
-      recommendation = 'Safe to proceed';
+      recommendation = 'Clear Parameters. No Active Threat Flags.';
     } else if (status === 'SUSPICIOUS') {
       riskLevel = 'MEDIUM';
-      recommendation = 'Proceed with caution';
+      recommendation = 'Proceed with Caution. Double-Check Receiver.';
     } else {
       riskLevel = 'HIGH';
-      recommendation = 'Do not proceed';
+      recommendation = 'CRITICAL WARNING: Avoid Funds Transfer!';
     }
   } else {
     const qrData = data as QrResult;
-    title = 'QR Code Intelligence Assessment';
+    title = 'QR Code Intelligent Assessment';
     entityValue = qrData.upi;
     merchant = qrData.merchant;
     score = 100 - qrData.riskScore; // Translate risk to reputation score
@@ -109,28 +110,24 @@ export const VerifyResult: React.FC = () => {
       icon: ShieldCheck,
       gaugeColor: '#10b981',
       description: 'This payment destination is fully verified and matches a reputable merchant.',
-      alertVariant: 'default' as const,
     },
     SAFE: {
       color: 'text-emerald-500 border-emerald-500 bg-emerald-500/10',
       icon: CheckCircle,
       gaugeColor: '#34d399',
       description: 'No threat history detected. Normal risk parameters.',
-      alertVariant: 'default' as const,
     },
     SUSPICIOUS: {
       color: 'text-amber-500 border-amber-500 bg-amber-500/10',
       icon: AlertTriangle,
       gaugeColor: '#f59e0b',
       description: 'Detections flag suspicious patterns or unverified merchant profile.',
-      alertVariant: 'warning' as const,
     },
     DANGEROUS: {
       color: 'text-red-500 border-red-500 bg-red-500/10',
       icon: ShieldAlert,
       gaugeColor: '#ef4444',
       description: 'CRITICAL WARNING: This target is linked to active scams or fraud reports.',
-      alertVariant: 'destructive' as const,
     },
   };
 
@@ -142,30 +139,33 @@ export const VerifyResult: React.FC = () => {
   const rotationDegrees = -90 + (score / 100) * 180;
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-8 max-w-4xl mx-auto">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <Button onClick={() => navigate(-1)} variant="ghost" className="gap-2">
+        <Button onClick={() => navigate(-1)} variant="ghost" size="sm" className="gap-2 hover:bg-muted font-semibold text-xs">
           <ArrowLeft className="h-4 w-4" />
           Back
         </Button>
-        <Badge variant="outline" className={`font-semibold px-3 py-1 ${currentConfig.color}`}>
-          {status}
+        <Badge variant="outline" className={`font-bold text-xs px-3.5 py-1 rounded-full ${currentConfig.color}`}>
+          Status: {status}
         </Badge>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
         {/* Left Side: Score Visualization */}
-        <Card className="md:col-span-1 flex flex-col justify-between overflow-hidden relative">
+        <Card className="md:col-span-1 flex flex-col justify-between overflow-hidden relative border border-border/40 shadow-sm transition-all duration-300 hover:shadow-md">
+          {/* Vertical Color Indicator */}
+          <div className="absolute top-0 left-0 w-1.5 h-full" style={{ backgroundColor: currentConfig.gaugeColor }} />
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground text-center">
-              Reputation Score
+            <CardTitle className="text-xs font-bold text-muted-foreground uppercase tracking-wider text-center mt-1">
+              Reputation Rating
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center p-6 flex-grow">
             {/* Semicircular Risk Gauge */}
             <div className="relative w-48 h-24 flex items-end justify-center overflow-hidden">
               {/* Outer Arc */}
-              <div className="absolute top-0 left-0 w-48 h-48 rounded-full border-8 border-muted" />
+              <div className="absolute top-0 left-0 w-48 h-48 rounded-full border-8 border-muted/50" />
               {/* Value Arc (Drawn as colored indicator) */}
               <div 
                 className="absolute top-0 left-0 w-48 h-48 rounded-full border-8 transition-transform duration-1000 ease-out origin-center"
@@ -174,20 +174,20 @@ export const VerifyResult: React.FC = () => {
                   transform: `rotate(${rotationDegrees}deg)`,
                 }}
               />
-              <div className="absolute inset-2 bg-card rounded-full flex flex-col items-center justify-end pb-1 z-10">
+              <div className="absolute inset-2 bg-card rounded-full flex flex-col items-center justify-end pb-1.5 z-10">
                 <span className="text-4xl font-extrabold tracking-tight">{score}</span>
-                <span className="text-xs text-muted-foreground uppercase font-bold tracking-wider">
+                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
                   Out of 100
                 </span>
               </div>
             </div>
 
-            <div className="text-center mt-4">
-              <span className={`text-lg font-bold tracking-tight`} style={{ color: currentConfig.gaugeColor }}>
+            <div className="text-center mt-6">
+              <span className={`text-xl font-extrabold tracking-tight`} style={{ color: currentConfig.gaugeColor }}>
                 {status}
               </span>
-              <p className="text-xs text-muted-foreground mt-1">
-                Risk Level: <span className="font-semibold">{riskLevel}</span>
+              <p className="text-xs text-muted-foreground mt-1.5 font-medium">
+                Risk Level Vector: <span className="font-bold">{riskLevel}</span>
               </p>
             </div>
           </CardContent>
@@ -195,36 +195,40 @@ export const VerifyResult: React.FC = () => {
 
         {/* Right Side: Information Panels */}
         <div className="md:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold">{title}</CardTitle>
-              <CardDescription>
-                Real-time reputation results for this payment destination.
+          <Card className="border border-border/40 shadow-sm transition-all duration-300 hover:shadow-md">
+            <CardHeader className="border-b bg-muted/10 pb-4">
+              <CardTitle className="text-base font-bold">{title}</CardTitle>
+              <CardDescription className="text-xs">
+                Real-time security analytics generated by ScamShield reputation nodes.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="pt-6 space-y-4">
               {merchant && (
                 <div className="flex justify-between items-center border-b pb-2">
-                  <span className="text-sm text-muted-foreground">Merchant Entity</span>
-                  <span className="font-semibold text-foreground">{merchant}</span>
+                  <span className="text-sm text-muted-foreground font-medium">Merchant Entity Name</span>
+                  <span className="font-bold text-sm text-foreground">{merchant}</span>
                 </div>
               )}
               <div className="flex justify-between items-center border-b pb-2">
-                <span className="text-sm text-muted-foreground">UPI ID</span>
-                <span className="font-semibold text-foreground select-all">{entityValue}</span>
+                <span className="text-sm text-muted-foreground font-medium">UPI ID Address</span>
+                <span className="font-mono font-bold text-sm text-foreground select-all">{entityValue}</span>
               </div>
 
               {/* Recommendation Panel */}
-              <div className={`p-4 rounded-lg border flex items-start gap-3 mt-4 ${status === 'DANGEROUS' ? 'bg-destructive/10 border-destructive/20 text-destructive' : 'bg-muted/50 border-muted'}`}>
-                <div className="p-2 bg-background rounded-md shadow-sm">
+              <div className={`p-4 rounded-lg border flex items-start gap-3 mt-6 ${
+                status === 'DANGEROUS' 
+                  ? 'bg-destructive/10 border-destructive/20 text-destructive' 
+                  : 'bg-muted/40 border-muted'
+              }`}>
+                <div className="p-2.5 bg-background rounded-lg shadow-sm shrink-0">
                   <StatusIcon className="h-5 w-5" style={{ color: currentConfig.gaugeColor }} />
                 </div>
-                <div>
-                  <h4 className="font-bold text-sm">Action Recommendation</h4>
-                  <p className="text-xs font-semibold uppercase mt-0.5" style={{ color: currentConfig.gaugeColor }}>
+                <div className="space-y-1">
+                  <h4 className="font-bold text-sm text-foreground">Action Recommendation</h4>
+                  <p className="text-xs font-extrabold uppercase tracking-wider" style={{ color: currentConfig.gaugeColor }}>
                     {recommendation}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-xs text-muted-foreground leading-relaxed mt-1">
                     {currentConfig.description}
                   </p>
                 </div>
@@ -233,24 +237,27 @@ export const VerifyResult: React.FC = () => {
           </Card>
 
           {/* Reasons List */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base font-semibold">Fraud Risk Indicators</CardTitle>
-              <CardDescription>
-                System findings and security details matching our rules.
+          <Card className="border border-border/40 shadow-sm">
+            <CardHeader className="border-b bg-muted/10 pb-4">
+              <CardTitle className="text-base font-bold flex items-center gap-2">
+                <Info className="h-4.5 w-4.5 text-muted-foreground" />
+                Security Risk Vectors Mapped
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Matches flagged by regular expressions, active reports, and intelligence nodes.
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <ul className="space-y-3">
+            <CardContent className="pt-6">
+              <ul className="space-y-3.5">
                 {reasons.map((reason, idx) => (
                   <motion.li 
                     key={idx}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="flex items-start gap-2.5 text-sm text-muted-foreground"
+                    className="flex items-start gap-2.5 text-xs text-muted-foreground font-medium leading-relaxed"
                   >
-                    <span className="h-1.5 w-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                    <span className="h-2 w-2 rounded-full bg-primary mt-1.5 shrink-0" />
                     <span>{reason}</span>
                   </motion.li>
                 ))}

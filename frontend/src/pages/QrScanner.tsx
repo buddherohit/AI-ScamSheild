@@ -11,7 +11,9 @@ import {
   Upload, 
   Camera, 
   Loader2, 
-  AlertCircle
+  AlertCircle,
+  Clock,
+  History
 } from 'lucide-react';
 import { qrService, QrScanResponse } from '@/features/qr';
 
@@ -37,7 +39,6 @@ export const QrScanner: React.FC = () => {
     loadHistory();
   }, []);
 
-  // Handle file drop
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -58,7 +59,6 @@ export const QrScanner: React.FC = () => {
     }
   };
 
-  // Handle file select
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       await processImageFile(e.target.files[0]);
@@ -72,7 +72,6 @@ export const QrScanner: React.FC = () => {
     try {
       const result = await qrService.scanQrImage(file);
       loadHistory();
-      // Navigate to results
       navigate('/verify/result', { state: { type: 'qr', data: result } });
     } catch (err: any) {
       setError(err.message || 'Failed to scan QR code image. Please check that the image contains a readable payment QR.');
@@ -81,13 +80,11 @@ export const QrScanner: React.FC = () => {
     }
   };
 
-  // Simulate scanning a camera QR code (Presets)
   const triggerCameraScan = async (presetType: 'safe' | 'dangerous') => {
     setLoading(true);
     setError(null);
     setSimulatedQRType(presetType);
 
-    // Simulated network delay
     setTimeout(async () => {
       let rawText = '';
       if (presetType === 'safe') {
@@ -111,33 +108,46 @@ export const QrScanner: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">QR Code Scanner</h2>
-        <p className="text-muted-foreground">
-          Upload or scan any UPI QR code payment invoice to verify recipient credentials and risk profiles.
-        </p>
+    <div className="space-y-8 max-w-4xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h2 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/75 bg-clip-text text-transparent">
+            QR Code Intelligence
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Scan or upload UPI QR codes to inspect merchant records and fraud risk vectors before paying.
+          </p>
+        </div>
       </div>
 
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="border-destructive/20 bg-destructive/5">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Scan Error</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
+      {/* Main actions grid */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Upload QR File Card */}
-        <Card className={`relative overflow-hidden transition-all duration-300 border-2 border-dashed ${dragActive ? 'border-primary bg-primary/5' : 'border-muted'}`}
+        <Card className={`relative overflow-hidden transition-all duration-300 border-2 border-dashed ${
+          dragActive 
+            ? 'border-primary bg-primary/5 shadow-md scale-[1.01]' 
+            : 'border-muted hover:border-primary/45 hover:shadow-sm'
+        }`}
           onDragEnter={handleDrag}
           onDragOver={handleDrag}
           onDragLeave={handleDrag}
           onDrop={handleDrop}
         >
-          <CardHeader className="pb-2">
-            <CardTitle>Image Upload</CardTitle>
-            <CardDescription>Drag and drop a QR image file or click to select.</CardDescription>
+          <CardHeader className="border-b bg-muted/5 pb-4">
+            <CardTitle className="text-base font-bold flex items-center gap-2">
+              <Upload className="h-4.5 w-4.5 text-primary" />
+              Image File Upload
+            </CardTitle>
+            <CardDescription className="text-xs">Drag and drop a QR image file or click to select.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center p-8 min-h-[260px] text-center">
             {loading && !cameraActive ? (
@@ -147,19 +157,19 @@ export const QrScanner: React.FC = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="p-4 bg-muted rounded-full w-fit mx-auto shadow-sm">
+                <div className="p-4 bg-muted/60 rounded-full w-fit mx-auto shadow-sm">
                   <Upload className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-foreground">
+                  <p className="text-sm font-semibold text-foreground">
                     Drag and drop file here, or click to upload
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Supports PNG, JPG, JPEG up to 5MB
+                    Supports PNG, JPG, JPEG files up to 5MB
                   </p>
                 </div>
-                <Label htmlFor="qr-file-upload" className="cursor-pointer">
-                  <Button variant="outline" size="sm" asChild>
+                <Label htmlFor="qr-file-upload" className="cursor-pointer inline-block">
+                  <Button variant="outline" size="sm" asChild className="hover:bg-muted font-medium text-xs">
                     <span>Choose File</span>
                   </Button>
                   <Input
@@ -177,43 +187,49 @@ export const QrScanner: React.FC = () => {
         </Card>
 
         {/* Camera Simulation Card */}
-        <Card className="flex flex-col justify-between">
-          <CardHeader>
-            <CardTitle>Camera Scanning</CardTitle>
-            <CardDescription>Simulate real-time camera scan frame overlay.</CardDescription>
+        <Card className="flex flex-col justify-between border border-border/40 shadow-sm transition-all duration-300 hover:shadow-md">
+          <CardHeader className="border-b bg-muted/10 pb-4">
+            <CardTitle className="text-base font-bold flex items-center gap-2">
+              <Camera className="h-4.5 w-4.5 text-primary" />
+              Camera Scan Simulation
+            </CardTitle>
+            <CardDescription className="text-xs">Simulate real-time camera scan frame overlay.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center flex-grow p-6 text-center">
             {cameraActive ? (
-              <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black flex flex-col items-center justify-center text-white border-2 border-primary">
+              <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black flex flex-col items-center justify-center text-white border border-primary/50 shadow-inner">
                 {/* Simulated Camera scan lines */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/20 to-transparent animate-pulse pointer-events-none" />
-                <div className="absolute left-[10%] right-[10%] top-[10%] bottom-[10%] border border-dashed border-primary/60 flex items-center justify-center">
-                  <QrCode className="h-16 w-16 text-primary/80 animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/10 to-transparent animate-pulse pointer-events-none" />
+                <div className="absolute left-[10%] right-[10%] top-[10%] bottom-[10%] border border-dashed border-primary/40 flex items-center justify-center">
+                  <QrCode className="h-16 w-16 text-primary/60 animate-pulse" />
                 </div>
 
                 {loading && simulatedQRType ? (
-                  <div className="z-10 bg-black/80 px-4 py-2 rounded-md flex items-center gap-2">
+                  <div className="z-10 bg-black/85 px-4 py-2.5 rounded-lg border border-border/10 flex items-center gap-2 shadow-xl">
                     <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                    <span className="text-xs font-semibold">Scanning Preset...</span>
+                    <span className="text-xs font-bold">Scanning Preset...</span>
                   </div>
                 ) : (
                   <div className="absolute bottom-4 flex gap-3 z-10">
-                    <Button onClick={() => triggerCameraScan('safe')} size="sm" className="bg-green-600 hover:bg-green-700">
+                    <Button onClick={() => triggerCameraScan('safe')} size="sm" className="bg-green-600 hover:bg-green-700 text-xs font-semibold">
                       Scan Safe QR
                     </Button>
-                    <Button onClick={() => triggerCameraScan('dangerous')} size="sm" variant="destructive">
+                    <Button onClick={() => triggerCameraScan('dangerous')} size="sm" variant="destructive" className="text-xs font-semibold">
                       Scan Dangerous QR
                     </Button>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="space-y-4">
-                <div className="p-4 bg-muted rounded-full w-fit mx-auto shadow-sm">
+              <div className="space-y-4 py-6">
+                <div className="p-4 bg-muted/60 rounded-full w-fit mx-auto shadow-sm">
                   <Camera className="h-8 w-8 text-muted-foreground" />
                 </div>
-                <p className="text-sm font-medium">Camera scanning mode offline</p>
-                <Button onClick={() => setCameraActive(true)} variant="outline" size="sm">
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-foreground">Camera feed is currently offline</p>
+                  <p className="text-xs text-muted-foreground">Initiate simulation to scan mock payment QR codes.</p>
+                </div>
+                <Button onClick={() => setCameraActive(true)} variant="outline" size="sm" className="hover:bg-muted text-xs font-medium">
                   Start Camera Scan
                 </Button>
               </div>
@@ -223,39 +239,56 @@ export const QrScanner: React.FC = () => {
       </div>
 
       {/* Recent QR Scans History */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Recent QR Scans</CardTitle>
-          <CardDescription>Payment destinations assessed via QR scans.</CardDescription>
+      <Card className="border border-border/40 shadow-sm">
+        <CardHeader className="border-b bg-muted/10 pb-4 flex flex-row items-center justify-between space-y-0">
+          <div>
+            <CardTitle className="text-base font-bold flex items-center gap-2">
+              <Clock className="h-4.5 w-4.5 text-muted-foreground" />
+              Recent QR Investigations
+            </CardTitle>
+            <CardDescription className="text-xs mt-0.5">Assessed payment destinations via QR uploads.</CardDescription>
+          </div>
+          {history.length > 0 && (
+            <Badge variant="outline" className="text-xs bg-muted/50 text-muted-foreground font-semibold">
+              {history.length} scans total
+            </Badge>
+          )}
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {history.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-6">
-              No recent QR scans found.
-            </p>
+            <div className="flex flex-col items-center justify-center py-10 text-center space-y-2">
+              <History className="h-8 w-8 text-muted-foreground/45" />
+              <p className="text-sm text-muted-foreground font-semibold">No recent QR scans found.</p>
+              <p className="text-xs text-muted-foreground/75">Scanned QR targets will be registered in this table.</p>
+            </div>
           ) : (
             <div className="space-y-3">
               {history.slice(0, 5).map((item, idx) => {
-                const statusColors = {
-                  LOW: 'bg-green-500/10 text-green-600 border-green-200',
-                  MEDIUM: 'bg-amber-500/10 text-amber-600 border-amber-200',
-                  HIGH: 'bg-red-500/10 text-red-600 border-red-200',
-                  CRITICAL: 'bg-red-500/10 text-red-600 border-red-200',
-                };
+                const isCritical = item.riskLevel === 'CRITICAL' || item.riskLevel === 'HIGH';
+                const isMedium = item.riskLevel === 'MEDIUM';
                 return (
                   <div 
                     key={idx}
                     onClick={() => navigate('/verify/result', { state: { type: 'qr', data: { upi: item.upi, merchant: item.merchant, riskScore: item.riskScore, riskLevel: item.riskLevel, recommendation: item.recommendation } } })}
-                    className="flex justify-between items-center p-3 rounded-lg border hover:bg-muted/30 transition-colors cursor-pointer"
+                    className="flex justify-between items-center p-3 rounded-lg border hover:bg-muted/30 hover:border-primary/10 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <QrCode className="h-5 w-5 text-muted-foreground shrink-0" />
                       <div>
-                        <span className="font-semibold text-sm block">{item.merchant}</span>
+                        <span className="font-semibold text-sm block text-foreground">{item.merchant}</span>
                         <span className="text-xs text-muted-foreground font-mono">{item.upi}</span>
                       </div>
                     </div>
-                    <Badge variant="outline" className={statusColors[item.riskLevel]}>
+                    <Badge 
+                      variant="outline" 
+                      className={`font-semibold text-xs py-0.5 px-2.5 rounded-full ${
+                        isCritical
+                          ? 'bg-red-500/10 text-red-600 border-red-200/50'
+                          : isMedium
+                          ? 'bg-amber-500/10 text-amber-600 border-amber-200/50'
+                          : 'bg-emerald-500/10 text-emerald-600 border-emerald-200/50'
+                      }`}
+                    >
                       Risk: {item.riskLevel} ({item.riskScore})
                     </Badge>
                   </div>
