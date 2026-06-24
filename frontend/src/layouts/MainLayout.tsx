@@ -3,7 +3,7 @@ import { Outlet } from 'react-router';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { useAppSelector, useAppDispatch } from '@/store';
-import { toggleSidebar } from '@/store/slices/uiSlice';
+import { setSidebarOpen } from '@/store/slices/uiSlice';
 import { CommandPalette } from '@/components/CommandPalette';
 import { cn } from '@/lib/utils';
 import { AnimatePresence } from 'framer-motion';
@@ -18,9 +18,10 @@ export const MainLayout: React.FC = () => {
     const handleResize = () => {
       if (window.innerWidth < 1024) {
         setIsMobile(true);
-        if (sidebarOpen) dispatch(toggleSidebar());
+        dispatch(setSidebarOpen(false));
       } else {
         setIsMobile(false);
+        dispatch(setSidebarOpen(true));
       }
     };
     
@@ -29,7 +30,7 @@ export const MainLayout: React.FC = () => {
     
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [dispatch, sidebarOpen]);
+  }, [dispatch]);
 
   // Apply theme to document root
   useEffect(() => {
