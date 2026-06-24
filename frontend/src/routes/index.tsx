@@ -16,6 +16,10 @@ import { QrScanner } from '@/pages/QrScanner';
 import { UpiVerify } from '@/pages/UpiVerify';
 import { VerifyResult } from '@/pages/VerifyResult';
 import { VerifyHistory } from '@/pages/VerifyHistory';
+import { SmsAnalysis } from '@/pages/SmsAnalysis';
+import { SmsHistory } from '@/pages/SmsHistory';
+import { SmsDetails } from '@/pages/SmsDetails';
+import { FraudInsights } from '@/pages/FraudInsights';
 
 interface GuardProps {
   children: React.ReactElement;
@@ -56,6 +60,12 @@ export const AppRoutes: React.FC = () => {
         <Route path="upi" element={<UpiVerify />} />
         <Route path="verify/result" element={<VerifyResult />} />
         <Route path="verify/history" element={<VerifyHistory />} />
+        
+        {/* Phase 6 Routes */}
+        <Route path="sms" element={<SmsAnalysis />} />
+        <Route path="sms/history" element={<SmsHistory />} />
+        <Route path="sms/analysis/:id" element={<SmsDetails />} />
+        <Route path="sms/insights" element={<FraudInsights />} />
         
         {/* Placeholders */}
         <Route path="notifications" element={<div className="p-6">Notifications (WIP)</div>} />

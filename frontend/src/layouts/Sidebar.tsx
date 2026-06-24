@@ -14,7 +14,9 @@ import {
   Activity,
   QrCode,
   Search,
-  History
+  History,
+  MessageSquare,
+  TrendingUp
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppDispatch, useAppSelector } from '@/store';
@@ -39,7 +41,10 @@ const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: QrCode, label: 'QR Scanner', path: '/qr' },
   { icon: Search, label: 'Verify UPI', path: '/upi' },
-  { icon: History, label: 'History', path: '/verify/history' },
+  { icon: MessageSquare, label: 'SMS Scanner', path: '/sms' },
+  { icon: History, label: 'UPI History', path: '/verify/history' },
+  { icon: History, label: 'SMS History', path: '/sms/history' },
+  { icon: TrendingUp, label: 'Fraud Insights', path: '/sms/insights' },
   { icon: ShieldAlert, label: 'Security Center', path: '/security' },
   { icon: Activity, label: 'Sessions', path: '/sessions' },
   { icon: Bell, label: 'Notifications', path: '/notifications' },
