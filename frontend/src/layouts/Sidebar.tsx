@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useLocation } from 'react-router';
+import { NavLink, useLocation, useNavigate } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Shield, 
@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { toggleSidebar } from '@/store/slices/uiSlice';
+import { toggleSidebar, setSidebarOpen } from '@/store/slices/uiSlice';
 import { logout } from '@/store/slices/authSlice';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -56,6 +56,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile }) => {
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const handleToggle = () => dispatch(toggleSidebar());
   const handleLogout = () => dispatch(logout());
@@ -100,6 +101,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile }) => {
               key={item.path} 
               to={item.path}
               title={!sidebarOpen ? item.label : undefined}
+              onClick={() => {
+                if (isMobile) {
+                  dispatch(setSidebarOpen(false));
+                }
+              }}
             >
               <div className={cn(
                 "flex items-center gap-3 rounded-md px-3 py-2.5 transition-colors group",
@@ -157,7 +163,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile }) => {
           <DropdownMenuContent align="end" side="right" className="w-56">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => {}}>
+            <DropdownMenuItem onClick={() => {
+              if (isMobile) dispatch(setSidebarOpen(false));
+              navigate('/profile');
+            }}>
               <User className="mr-2 h-4 w-4" />
               <span>Profile</span>
             </DropdownMenuItem>
