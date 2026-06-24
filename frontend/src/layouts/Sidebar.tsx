@@ -11,14 +11,17 @@ import {
   ChevronRight,
   LogOut,
   User,
-  Activity
+  Activity,
+  QrCode,
+  Search,
+  History
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { toggleSidebar } from '@/store/slices/uiSlice';
 import { logout } from '@/store/slices/authSlice';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +37,9 @@ interface SidebarProps {
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+  { icon: QrCode, label: 'QR Scanner', path: '/qr' },
+  { icon: Search, label: 'Verify UPI', path: '/upi' },
+  { icon: History, label: 'History', path: '/verify/history' },
   { icon: ShieldAlert, label: 'Security Center', path: '/security' },
   { icon: Activity, label: 'Sessions', path: '/sessions' },
   { icon: Bell, label: 'Notifications', path: '/notifications' },

@@ -12,6 +12,10 @@ import { SessionManagement } from '@/pages/SessionManagement';
 import { SecurityCenter } from '@/pages/SecurityCenter';
 import { Settings } from '@/pages/Settings';
 import { NotFound } from '@/pages/NotFound';
+import { QrScanner } from '@/pages/QrScanner';
+import { UpiVerify } from '@/pages/UpiVerify';
+import { VerifyResult } from '@/pages/VerifyResult';
+import { VerifyHistory } from '@/pages/VerifyHistory';
 
 interface GuardProps {
   children: React.ReactElement;
@@ -46,6 +50,12 @@ export const AppRoutes: React.FC = () => {
         <Route path="sessions" element={<SessionManagement />} />
         <Route path="security" element={<SecurityCenter />} />
         <Route path="settings" element={<Settings />} />
+        
+        {/* Phase 5 Routes */}
+        <Route path="qr" element={<QrScanner />} />
+        <Route path="upi" element={<UpiVerify />} />
+        <Route path="verify/result" element={<VerifyResult />} />
+        <Route path="verify/history" element={<VerifyHistory />} />
         
         {/* Placeholders */}
         <Route path="notifications" element={<div className="p-6">Notifications (WIP)</div>} />

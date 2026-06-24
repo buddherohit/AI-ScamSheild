@@ -24,7 +24,7 @@ export const Login: React.FC = () => {
         dispatch(loginSuccess({
           token: 'mock-jwt-token',
           refreshToken: 'mock-refresh-token',
-          user: { id: '1', email, name: 'Admin User', role: 'admin' }
+          user: { id: '1', email, name: 'Admin User', roles: ['admin'] }
         }));
       } else {
         dispatch(loginFailure('Invalid credentials. Try admin@example.com / admin'));

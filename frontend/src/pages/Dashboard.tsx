@@ -36,7 +36,7 @@ const defaultActivities = [
 
 export const Dashboard: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { metrics, recentActivity, threatTrends, loading } = useAppSelector((state) => state.dashboard);
+  const { metrics, recentActivity, threatTrends } = useAppSelector((state) => state.dashboard);
 
   useEffect(() => {
     const loadDashboardData = async () => {
