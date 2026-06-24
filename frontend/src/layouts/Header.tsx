@@ -35,15 +35,16 @@ export const Header: React.FC<HeaderProps> = ({ isMobile }) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 md:gap-4 flex-1 justify-end">
-        <div className="relative hidden sm:block w-full max-w-xs">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search (Ctrl+K)..."
-            className="w-full bg-muted/50 pl-9 md:w-[300px]"
-          />
-        </div>
+        <button 
+          onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
+          className="relative hidden sm:flex items-center w-full max-w-xs h-9 px-3 bg-muted/30 border border-input rounded-md text-sm text-muted-foreground hover:bg-muted/60 transition-all focus:outline-none focus:ring-1 focus:ring-ring"
+        >
+          <Search className="h-4 w-4 mr-2 text-muted-foreground" />
+          <span className="text-xs font-normal">Search (Ctrl+K)...</span>
+          <span className="absolute right-2 top-1.5 pointer-events-none inline-flex h-6 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground shadow-sm">
+            <span>Ctrl</span>K
+          </span>
+        </button>
 
         <Button variant="ghost" size="icon" className="relative" onClick={() => dispatch(toggleNotificationDrawer())}>
           <Bell className="h-5 w-5" />
